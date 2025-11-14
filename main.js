@@ -83,5 +83,65 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Prevent form submission on Enter in todo input (already handled in todo.js)
     // Add any other global utilities here
+    
+    // Fullscreen button functionality
+    const fullscreenButton = document.getElementById('fullscreen-button');
+    const fullscreenIcon = document.getElementById('fullscreen-icon');
+    const fullscreenExitIcon = document.getElementById('fullscreen-exit-icon');
+    
+    if (fullscreenButton) {
+        // Function to update icon based on fullscreen state
+        const updateFullscreenIcon = () => {
+            if (document.fullscreenElement || document.webkitFullscreenElement || 
+                document.mozFullScreenElement || document.msFullscreenElement) {
+                fullscreenIcon.classList.add('hidden');
+                fullscreenExitIcon.classList.remove('hidden');
+            } else {
+                fullscreenIcon.classList.remove('hidden');
+                fullscreenExitIcon.classList.add('hidden');
+            }
+        };
+        
+        // Toggle fullscreen
+        fullscreenButton.addEventListener('click', async () => {
+            try {
+                if (!document.fullscreenElement && !document.webkitFullscreenElement && 
+                    !document.mozFullScreenElement && !document.msFullscreenElement) {
+                    // Enter fullscreen
+                    if (document.documentElement.requestFullscreen) {
+                        await document.documentElement.requestFullscreen();
+                    } else if (document.documentElement.webkitRequestFullscreen) {
+                        await document.documentElement.webkitRequestFullscreen();
+                    } else if (document.documentElement.mozRequestFullScreen) {
+                        await document.documentElement.mozRequestFullScreen();
+                    } else if (document.documentElement.msRequestFullscreen) {
+                        await document.documentElement.msRequestFullscreen();
+                    }
+                } else {
+                    // Exit fullscreen
+                    if (document.exitFullscreen) {
+                        await document.exitFullscreen();
+                    } else if (document.webkitExitFullscreen) {
+                        await document.webkitExitFullscreen();
+                    } else if (document.mozCancelFullScreen) {
+                        await document.mozCancelFullScreen();
+                    } else if (document.msExitFullscreen) {
+                        await document.msExitFullscreen();
+                    }
+                }
+            } catch (error) {
+                console.error('Error toggling fullscreen:', error);
+            }
+        });
+        
+        // Listen for fullscreen changes to update icon
+        document.addEventListener('fullscreenchange', updateFullscreenIcon);
+        document.addEventListener('webkitfullscreenchange', updateFullscreenIcon);
+        document.addEventListener('mozfullscreenchange', updateFullscreenIcon);
+        document.addEventListener('MSFullscreenChange', updateFullscreenIcon);
+        
+        // Initialize icon state
+        updateFullscreenIcon();
+    }
 });
 
