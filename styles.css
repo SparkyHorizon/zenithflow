@@ -1,0 +1,271 @@
+/* Fallback background gradient */
+body {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    margin: 0;
+    padding: 0;
+}
+
+#bg-video {
+    filter: brightness(0.8);
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 0;
+}
+
+/* Notion-style Editor Customization */
+.resizable-notes {
+    width: 24rem;
+    min-width: 200px;
+    max-width: 80vw;
+    overflow: hidden;
+    flex: 0 0 auto;
+    position: relative;
+    box-sizing: border-box;
+}
+
+.resize-handle-left {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+    cursor: ew-resize;
+    background: transparent;
+    z-index: 20;
+    user-select: none;
+    transition: background-color 0.2s;
+}
+
+.resize-handle-left:hover {
+    background: rgba(59, 130, 246, 0.5);
+}
+
+.resize-handle-left:active {
+    background: rgba(59, 130, 246, 0.8);
+}
+
+#editor-container {
+    background-color: #111827;
+    color: white;
+}
+
+#notes-textarea {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    font-size: 18px;
+    line-height: 1.6;
+    word-break: break-word;
+    padding-left: 0.5rem;
+}
+
+#notes-textarea h1,
+#notes-textarea h2,
+#notes-textarea h3 {
+    display: block;
+    margin: 0.5em 0;
+}
+
+#notes-textarea h1 {
+    font-size: 2em;
+    font-weight: bold;
+}
+
+#notes-textarea h2 {
+    font-size: 1.5em;
+    font-weight: bold;
+}
+
+#notes-textarea h3 {
+    font-size: 1.25em;
+    font-weight: bold;
+}
+
+#notes-textarea strong {
+    font-weight: bold;
+}
+
+#notes-textarea em {
+    font-style: italic;
+}
+
+/* Checkbox styling */
+#notes-textarea input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    border: 1.5px solid #d1d5db;
+    border-radius: 4px;
+    background-color: transparent;
+    cursor: pointer;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    margin: 0;
+    flex-shrink: 0;
+    position: relative;
+}
+
+#notes-textarea input[type="checkbox"]:checked {
+    background-color: #2563eb;
+    border-color: #2563eb;
+}
+
+#notes-textarea input[type="checkbox"]:checked::after {
+    content: '✓';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+    font-size: 14px;
+    font-weight: bold;
+    line-height: 1;
+}
+
+#notes-textarea:empty:before {
+    content: attr(data-placeholder);
+    color: #6b7280;
+    pointer-events: none;
+}
+
+/* Format Menu Styling */
+#format-menu {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+}
+
+#format-menu-items {
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+/* Emoji menu */
+#emoji-menu {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+}
+
+#emoji-search {
+    font-size: 14px;
+}
+
+#emoji-search::placeholder {
+    color: #9ca3af;
+}
+
+#emoji-options {
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+#emoji-options button {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    font-size: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #1f2937;
+    border: 1px solid #374151;
+    cursor: pointer;
+    transition: background-color 0.15s ease;
+}
+
+#emoji-options button:hover {
+    background: #374151;
+    transform: scale(1.1);
+}
+
+#emoji-remove {
+    font-size: 13px;
+    font-weight: 500;
+}
+
+/* Custom scrollbar for editor */
+#editor-container::-webkit-scrollbar {
+    width: 8px;
+}
+
+#editor-container::-webkit-scrollbar-track {
+    background: #1f2937;
+}
+
+#editor-container::-webkit-scrollbar-thumb {
+    background: #4b5563;
+    border-radius: 4px;
+}
+
+#editor-container::-webkit-scrollbar-thumb:hover {
+    background: #6b7280;
+}
+
+/* Custom scrollbar for menus */
+#block-menu::-webkit-scrollbar,
+#emoji-menu::-webkit-scrollbar {
+    width: 6px;
+}
+
+#block-menu::-webkit-scrollbar-track,
+#emoji-menu::-webkit-scrollbar-track {
+    background: #1f2937;
+}
+
+#block-menu::-webkit-scrollbar-thumb,
+#emoji-menu::-webkit-scrollbar-thumb {
+    background: #4b5563;
+    border-radius: 3px;
+}
+
+#block-menu::-webkit-scrollbar-thumb:hover,
+#emoji-menu::-webkit-scrollbar-thumb:hover {
+    background: #6b7280;
+}
+
+/* Responsive adjustments */
+@media (max-width: 1024px) {
+    body > div {
+        flex-direction: column;
+    }
+    
+    body > div > div:first-child {
+        height: 50vh;
+    }
+    
+    body > div > div:last-child {
+        width: 100%;
+        height: 50vh;
+    }
+}
+
+/* Improve button touch targets on mobile */
+@media (max-width: 768px) {
+    button {
+        min-height: 44px;
+        min-width: 44px;
+    }
+}
+
+/* Smooth scrolling */
+html {
+    scroll-behavior: smooth;
+}
+
+/* Selection box for right-click drag */
+.selection-box {
+    position: fixed;
+    border: 2px solid #3b82f6;
+    background-color: rgba(59, 130, 246, 0.2);
+    pointer-events: none;
+    z-index: 1000;
+    box-sizing: border-box;
+    border-radius: 2px;
+    display: none;
+}
+
+/* Highlighted blocks within selection box */
+.block-item.box-selected {
+    background-color: rgba(59, 130, 246, 0.3) !important;
+    border-radius: 4px;
+}
+
