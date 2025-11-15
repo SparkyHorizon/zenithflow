@@ -10,12 +10,6 @@ The dashboard features a split-screen design:
 
 ## Features
 
-### ✅ Study Timer
-- **Count-up mode**: Track total time studied
-- **Pomodoro mode**: 25-minute focused study sessions with automatic alerts
-- **Break timer**: 5-minute break sessions
-- **Controls**: Start, Pause, Reset, and Take Break buttons
-- **Persistence**: Timer state is saved to localStorage
 
 ### ✅ Notes Editor
 - Notion-style block editor with “+” menu and slash commands
