@@ -26,6 +26,7 @@ class SimpleNotesEditor {
         ];
 
         this.formatTypes = [
+            { type: 'text', label: 'Text', icon: 'T', shortcut: '' },
             { type: 'h1', label: 'Heading 1', icon: 'H1', shortcut: '# ' },
             { type: 'h2', label: 'Heading 2', icon: 'H2', shortcut: '## ' },
             { type: 'h3', label: 'Heading 3', icon: 'H3', shortcut: '### ' },
@@ -668,6 +669,51 @@ class SimpleNotesEditor {
 
         // Apply formatting based on type
         switch (formatType) {
+            case 'text':
+                // Convert formatted text back to plain text
+                // Get the selected content and extract plain text
+                const selectedContent = range.cloneContents();
+                const tempDiv = document.createElement('div');
+                tempDiv.appendChild(selectedContent);
+                
+                // Extract text, handling special formatted elements
+                let plainText = '';
+                const processNode = (node) => {
+                    if (node.nodeType === Node.TEXT_NODE) {
+                        plainText += node.textContent;
+                    } else if (node.nodeType === Node.ELEMENT_NODE) {
+                        // Handle checkbox containers - extract only the label text
+                        if (node.style.display === 'flex' && node.querySelector('input[type="checkbox"]')) {
+                            const label = node.querySelector('span');
+                            if (label) {
+                                plainText += label.textContent;
+                            }
+                        } else {
+                            // For other elements (headings, bold, italic, lists), recursively process children
+                            Array.from(node.childNodes).forEach(processNode);
+                        }
+                    }
+                };
+                
+                Array.from(tempDiv.childNodes).forEach(processNode);
+                
+                // If we couldn't extract properly, fall back to selectedText
+                if (!plainText.trim()) {
+                    plainText = selectedText;
+                }
+                
+                // Remove any list prefixes (bullet points or numbers) that might be in the text
+                plainText = plainText.replace(/^[•\d]+\.?\s*/gm, '').trim();
+                
+                // Replace the range content with plain text
+                range.deleteContents();
+                const textNode = document.createTextNode(plainText);
+                range.insertNode(textNode);
+                
+                // Move cursor to end of inserted text
+                range.setStartAfter(textNode);
+                range.collapse(true);
+                break;
             case 'h1':
                 const h1 = document.createElement('h1');
                 h1.style.fontSize = '2em';

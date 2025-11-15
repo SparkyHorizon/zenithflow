@@ -1,0 +1,163 @@
+// Spotify OAuth Backend Server
+// This server handles the OAuth 2.0 flow securely
+// 
+// COPY THIS FILE TO server.js AND ADD YOUR CREDENTIALS
+// server.js is gitignored to protect your credentials
+
+const express = require('express');
+const cors = require('cors');
+const axios = require('axios');
+const path = require('path');
+
+const app = express();
+const PORT = process.env.PORT || 3001;
+
+// Middleware
+app.use(cors());
+app.use(express.json());
+app.use(express.static('.')); // Serve static files from current directory
+
+// Spotify App credentials
+// IMPORTANT: Replace these with your actual credentials from Spotify Dashboard
+const CLIENT_ID = process.env.SPOTIFY_CLIENT_ID || 'YOUR_CLIENT_ID_HERE';
+const CLIENT_SECRET = process.env.SPOTIFY_CLIENT_SECRET || 'YOUR_CLIENT_SECRET_HERE';
+const REDIRECT_URI = process.env.REDIRECT_URI || 'http://127.0.0.1:3001/callback';
+
+// Step 1: Initiate OAuth - redirect user to Spotify
+app.get('/api/spotify/login', (req, res) => {
+    const scope = 'user-read-playback-state user-modify-playback-state user-read-currently-playing';
+    const state = generateRandomString(16);
+    
+    const authUrl = `https://accounts.spotify.com/authorize?` +
+        `client_id=${CLIENT_ID}&` +
+        `response_type=code&` +
+        `redirect_uri=${encodeURIComponent(REDIRECT_URI)}&` +
+        `scope=${encodeURIComponent(scope)}&` +
+        `state=${state}`;
+    
+    res.json({ authUrl });
+});
+
+// Step 2: Handle callback from Spotify
+app.get('/callback', async (req, res) => {
+    const code = req.query.code;
+    const error = req.query.error;
+    
+    if (error) {
+        return res.redirect(`/?error=${encodeURIComponent(error)}`);
+    }
+    
+    if (!code) {
+        return res.redirect('/?error=no_code');
+    }
+    
+    try {
+        // Exchange code for tokens
+        const tokenResponse = await axios.post('https://accounts.spotify.com/api/token', 
+            new URLSearchParams({
+                grant_type: 'authorization_code',
+                code: code,
+                redirect_uri: REDIRECT_URI,
+                client_id: CLIENT_ID,
+                client_secret: CLIENT_SECRET
+            }),
+            {
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                }
+            }
+        );
+        
+        const { access_token, refresh_token } = tokenResponse.data;
+        
+        // Redirect back to frontend with tokens
+        res.send(`
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <title>Spotify Authentication</title>
+            </head>
+            <body>
+                <script>
+                    const tokens = {
+                        accessToken: '${access_token}',
+                        refreshToken: '${refresh_token || ''}'
+                    };
+                    
+                    localStorage.setItem('spotifyAccessToken', tokens.accessToken);
+                    if (tokens.refreshToken) {
+                        localStorage.setItem('spotifyRefreshToken', tokens.refreshToken);
+                    }
+                    
+                    if (window.opener) {
+                        window.opener.postMessage({ type: 'SPOTIFY_AUTH_SUCCESS', tokens }, '*');
+                        window.close();
+                    } else {
+                        window.location.href = '/';
+                    }
+                </script>
+                <p>Authentication successful! You can close this window.</p>
+            </body>
+            </html>
+        `);
+    } catch (error) {
+        console.error('Token exchange error:', error.response?.data || error.message);
+        res.redirect(`/?error=token_exchange_failed`);
+    }
+});
+
+// Step 3: Refresh access token
+app.post('/api/spotify/refresh', async (req, res) => {
+    const { refreshToken } = req.body;
+    
+    if (!refreshToken) {
+        return res.status(400).json({ error: 'Refresh token required' });
+    }
+    
+    try {
+        const tokenResponse = await axios.post('https://accounts.spotify.com/api/token',
+            new URLSearchParams({
+                grant_type: 'refresh_token',
+                refresh_token: refreshToken,
+                client_id: CLIENT_ID,
+                client_secret: CLIENT_SECRET
+            }),
+            {
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                }
+            }
+        );
+        
+        res.json({
+            accessToken: tokenResponse.data.access_token,
+            refreshToken: tokenResponse.data.refresh_token || refreshToken
+        });
+    } catch (error) {
+        console.error('Token refresh error:', error.response?.data || error.message);
+        res.status(401).json({ error: 'Token refresh failed' });
+    }
+});
+
+// Helper function to generate random string for state
+function generateRandomString(length) {
+    let text = '';
+    const possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    for (let i = 0; i < length; i++) {
+        text += possible.charAt(Math.floor(Math.random() * possible.length));
+    }
+    return text;
+}
+
+// Serve the main app
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'index.html'));
+});
+
+app.listen(PORT, () => {
+    console.log(`\n🎵 Spotify OAuth Server running on http://127.0.0.1:${PORT}`);
+    console.log(`\n✅ Server is ready!`);
+    console.log(`📝 Open http://127.0.0.1:${PORT} in your browser`);
+    console.log(`🔐 Redirect URI: ${REDIRECT_URI}\n`);
+});
+

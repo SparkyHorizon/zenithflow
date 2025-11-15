@@ -17,26 +17,70 @@
             </video>
             
             <!-- Spotify Widget Overlay - Bottom Center -->
-            <div class="absolute inset-0 flex items-end justify-center pb-8 z-10">
-                <div id="spotify-content" class="text-center w-full px-8">
-                    <button id="spotify-login" class="bg-green-500 hover:bg-green-600 text-white px-8 py-4 rounded-lg transition font-semibold text-lg shadow-lg">
+            <div id="spotify-overlay" class="absolute inset-0 z-10 pointer-events-none">
+                <div id="spotify-content" class="absolute inset-0 flex items-end justify-center pb-8 pointer-events-auto">
+                    <button id="spotify-login" class="bg-green-500 hover:bg-green-600 text-white px-8 py-4 rounded-lg transition font-semibold text-lg shadow-lg pointer-events-auto">
                         Login with Spotify
                     </button>
-                    <div id="spotify-player" class="hidden mt-6">
-                        <div class="flex items-center justify-center gap-6 flex-wrap bg-white/90 backdrop-blur-sm rounded-lg p-6 shadow-xl max-w-2xl mx-auto">
-                            <img id="album-art" src="" alt="Album Art" class="w-32 h-32 rounded-lg shadow-lg object-cover">
-                            <div class="text-left min-w-0 flex-1">
-                                <div id="song-title" class="text-2xl font-semibold text-gray-800 mb-2"></div>
-                                <div id="song-artist" class="text-lg text-gray-600"></div>
+                </div>
+                <div id="spotify-player" class="hidden pointer-events-auto">
+                    <div id="spotify-player-container" class="flex flex-col items-center justify-center gap-2 bg-black/95 backdrop-blur-sm rounded-lg p-3 shadow-xl border border-gray-800 relative cursor-move" style="width: 550px;">
+                            <!-- Drag Handle -->
+                            <div id="spotify-drag-handle" class="absolute top-1 left-2 right-2 h-4 cursor-move flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity">
+                                <div class="flex gap-1">
+                                    <div class="w-1 h-1 bg-gray-500 rounded-full"></div>
+                                    <div class="w-1 h-1 bg-gray-500 rounded-full"></div>
+                                    <div class="w-1 h-1 bg-gray-500 rounded-full"></div>
+                                </div>
                             </div>
-                            <div class="flex gap-3">
-                                <button id="spotify-prev" class="bg-gray-200 hover:bg-gray-300 text-gray-800 px-5 py-3 rounded-lg transition text-xl" aria-label="Previous">⏮</button>
-                                <button id="spotify-play-pause" class="bg-green-500 hover:bg-green-600 text-white px-5 py-3 rounded-lg transition text-xl" aria-label="Play/Pause">▶</button>
-                                <button id="spotify-next" class="bg-gray-200 hover:bg-gray-300 text-gray-800 px-5 py-3 rounded-lg transition text-xl" aria-label="Next">⏭</button>
+                            <div class="flex items-center justify-center gap-3 flex-wrap w-full overflow-hidden">
+                                <img id="album-art" src="" alt="Album Art" class="rounded-lg shadow-lg object-cover flex-shrink-0">
+                                <div class="text-left min-w-0 flex-1 overflow-hidden">
+                                    <div id="song-title" class="text-lg font-semibold text-white mb-0.5"></div>
+                                    <div id="song-artist" class="text-sm text-gray-400"></div>
+                                </div>
+                                <div class="flex items-center gap-1.5 flex-shrink-0">
+                                    <button id="spotify-shuffle" class="spotify-control-btn text-gray-400 hover:text-white transition" aria-label="Shuffle" title="Shuffle">
+                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                                            <path d="M10.59 9.17L5.41 4 4 5.41l5.17 5.17 1.42-1.41zM14.5 4l2.04 2.04L4 18.59 5.41 20 17.96 7.46 20 9.5V4h-5.5zm.33 9.41l-1.41 1.41 3.13 3.13L14.5 20H20v-5.5l-2.04 2.04-3.13-3.13z"/>
+                                        </svg>
+                                    </button>
+                                    <button id="spotify-prev" class="spotify-control-btn text-gray-400 hover:text-white transition" aria-label="Previous" title="Previous">
+                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                                            <path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/>
+                                        </svg>
+                                    </button>
+                                <button id="spotify-play-pause" class="spotify-play-pause-btn bg-white text-black rounded-full" aria-label="Play/Pause" title="Play/Pause">
+                                    <svg id="play-icon" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" class="ml-0.5">
+                                        <path d="M8 5v14l11-7z"/>
+                                    </svg>
+                                    <svg id="pause-icon" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" class="hidden">
+                                        <path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z"/>
+                                    </svg>
+                                </button>
+                                    <button id="spotify-next" class="spotify-control-btn text-gray-400 hover:text-white transition" aria-label="Next" title="Next">
+                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                                            <path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/>
+                                        </svg>
+                                    </button>
+                                    <button id="spotify-repeat" class="spotify-control-btn text-gray-400 hover:text-white transition" aria-label="Repeat" title="Repeat">
+                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                                            <path d="M7 7h10v3l4-4-4-4v3H5v6h2V7zm10 10H7v-3l-4 4 4 4v-3h12v-6h-2v4z"/>
+                                        </svg>
+                                    </button>
+                                </div>
+                            </div>
+                            <!-- Progress Bar -->
+                            <div class="flex items-center gap-2 w-full overflow-hidden min-w-0">
+                                <span id="current-time" class="text-white tabular-nums text-right flex-shrink-0">0:00</span>
+                                <div id="progress-container" class="flex-1 relative cursor-pointer min-w-0">
+                                    <div id="progress-bar" class="absolute left-0 top-0 h-full rounded-full" style="width: 0%"></div>
+                                    <div id="progress-handle" class="absolute top-1/2 rounded-full opacity-0 transition-opacity" style="left: 0%"></div>
+                                </div>
+                                <span id="total-time" class="text-gray-400 tabular-nums flex-shrink-0">0:00</span>
                             </div>
                         </div>
                     </div>
-                </div>
             </div>
         </div>
 

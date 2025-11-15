@@ -251,6 +251,269 @@ html {
     scroll-behavior: smooth;
 }
 
+/* Spotify Player Styling */
+.spotify-control-btn {
+    background: transparent;
+    border: none;
+    padding: 8px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+.spotify-control-btn:hover {
+    transform: scale(1.1);
+}
+
+.spotify-control-btn:active {
+    transform: scale(0.95);
+}
+
+.spotify-play-pause-btn {
+    width: 48px;
+    height: 48px;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    position: relative;
+}
+
+.spotify-play-pause-btn:hover:not(:active) {
+    transform: scale(1.05);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+.spotify-play-pause-btn:active {
+    transform: scale(0.98);
+    transition: transform 0.1s ease;
+}
+
+/* Smooth icon transitions */
+#play-icon,
+#pause-icon {
+    transition: opacity 0.15s ease;
+    position: absolute;
+}
+
+#play-icon.hidden,
+#pause-icon.hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+
+#spotify-shuffle.active,
+#spotify-repeat.active {
+    color: #1db954;
+}
+
+#spotify-shuffle.active:hover,
+#spotify-repeat.active:hover {
+    color: #1ed760;
+}
+
+/* Progress Bar Styling */
+#spotify-player-container #progress-container {
+    position: relative;
+    height: calc(4px * var(--scale, 1));
+    background-color: #4a4a4a;
+    border-radius: calc(2px * var(--scale, 1));
+    cursor: pointer;
+}
+
+#spotify-player-container #progress-container:hover {
+    height: calc(6px * var(--scale, 1));
+}
+
+#spotify-player-container #progress-container:hover #progress-handle {
+    opacity: 1 !important;
+}
+
+#spotify-player-container #progress-bar {
+    height: 100%;
+    background-color: #ffffff;
+    border-radius: calc(2px * var(--scale, 1));
+    transition: width 0.1s linear;
+}
+
+#spotify-player-container #progress-handle {
+    width: calc(12px * var(--scale, 1));
+    height: calc(12px * var(--scale, 1));
+    background-color: #ffffff;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    transition: opacity 0.2s ease, left 0.1s linear;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    pointer-events: none;
+}
+
+#spotify-player-container #progress-container:hover #progress-bar {
+    background-color: #1db954;
+}
+
+/* Spotify Player Container - Draggable (Fixed Size) */
+#spotify-player-container {
+    position: absolute;
+    user-select: none;
+    --scale-factor: 1;
+    font-size: calc(1rem * var(--scale-factor));
+    overflow: hidden;
+    box-sizing: border-box;
+    width: 550px !important;
+    min-width: 550px !important;
+    max-width: 550px !important;
+}
+
+/* Calculate scale factor based on container width (600px is base) */
+#spotify-player-container {
+    --base-width: 600;
+    --current-width: 600;
+    --scale: 1;
+}
+
+#spotify-player-container:active {
+    cursor: move;
+}
+
+#spotify-drag-handle {
+    z-index: 10;
+    pointer-events: auto;
+}
+
+#spotify-resize-handle {
+    z-index: 10;
+    pointer-events: auto;
+    background: linear-gradient(135deg, transparent 0%, transparent 50%, rgba(255,255,255,0.1) 50%);
+}
+
+#spotify-player-container button,
+#spotify-player-container input,
+#spotify-player-container #progress-container {
+    pointer-events: auto;
+}
+
+/* Responsive scaling for Spotify player content */
+#spotify-player-container {
+    --scale: 1;
+}
+
+#spotify-player-container img#album-art {
+    width: calc(5rem * var(--scale, 1));
+    height: calc(5rem * var(--scale, 1));
+    min-width: calc(5rem * var(--scale, 1));
+    min-height: calc(5rem * var(--scale, 1));
+    flex-shrink: 0;
+    max-width: calc(5rem * var(--scale, 1));
+    max-height: calc(5rem * var(--scale, 1));
+    object-fit: cover;
+}
+
+#spotify-player-container #song-title {
+    font-size: calc(1.125rem * var(--scale, 1));
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 100%;
+    line-height: 1.2;
+}
+
+#spotify-player-container #song-artist {
+    font-size: calc(0.875rem * var(--scale, 1));
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 100%;
+    line-height: 1.2;
+}
+
+#spotify-player-container .spotify-control-btn {
+    padding: calc(0.375rem * var(--scale, 1));
+    width: calc(2rem * var(--scale, 1));
+    height: calc(2rem * var(--scale, 1));
+    min-width: calc(2rem * var(--scale, 1));
+    min-height: calc(2rem * var(--scale, 1));
+    flex-shrink: 0;
+}
+
+#spotify-player-container .spotify-control-btn svg {
+    width: calc(1.25rem * var(--scale, 1));
+    height: calc(1.25rem * var(--scale, 1));
+}
+
+#spotify-player-container #spotify-shuffle svg,
+#spotify-player-container #spotify-repeat svg {
+    width: calc(1.25rem * var(--scale, 1));
+    height: calc(1.25rem * var(--scale, 1));
+}
+
+#spotify-player-container .spotify-play-pause-btn {
+    width: calc(2.5rem * var(--scale, 1));
+    height: calc(2.5rem * var(--scale, 1));
+    min-width: calc(2.5rem * var(--scale, 1));
+    min-height: calc(2.5rem * var(--scale, 1));
+    flex-shrink: 0;
+}
+
+#spotify-player-container .spotify-play-pause-btn svg {
+    width: calc(1.25rem * var(--scale, 1));
+    height: calc(1.25rem * var(--scale, 1));
+}
+
+#spotify-player-container #current-time,
+#spotify-player-container #total-time {
+    font-size: calc(0.875rem * var(--scale, 1));
+    min-width: calc(2.5rem * var(--scale, 1));
+    max-width: calc(3rem * var(--scale, 1));
+    line-height: 1;
+    flex-shrink: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+#spotify-player-container .gap-6 {
+    gap: calc(0.75rem * var(--scale, 1));
+}
+
+#spotify-player-container .gap-2 {
+    gap: calc(0.5rem * var(--scale, 1));
+}
+
+#spotify-player-container .gap-3 {
+    gap: calc(0.75rem * var(--scale, 1));
+}
+
+#spotify-player-container .gap-4 {
+    gap: calc(0.5rem * var(--scale, 1));
+}
+
+#spotify-player-container .p-6 {
+    padding: calc(0.75rem * var(--scale, 1));
+}
+
+/* Ensure all content fits within container */
+#spotify-player-container > div {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+#spotify-player-container .flex {
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+/* Make sure text containers don't overflow */
+#spotify-player-container .text-left {
+    max-width: 100%;
+    overflow: hidden;
+}
+
 /* Selection box for right-click drag */
 .selection-box {
     position: fixed;
