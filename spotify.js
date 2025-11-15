@@ -86,7 +86,16 @@ class SpotifyManager {
 
     // Backend API endpoint
     get backendUrl() {
-        return window.SPOTIFY_BACKEND_URL || 'http://127.0.0.1:3001';
+        // For Vercel deployment, use the same origin
+        // For local development, use the local server
+        if (window.SPOTIFY_BACKEND_URL) {
+            return window.SPOTIFY_BACKEND_URL;
+        }
+        // Auto-detect: if on localhost, use local server; otherwise use same origin
+        if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+            return 'http://127.0.0.1:3001';
+        }
+        return window.location.origin;
     }
 
     async initiateLogin() {
@@ -569,9 +578,9 @@ class SpotifyManager {
         if (!this.playerContainer || !this.dragHandle) return;
         
         // Set fixed size
-        this.playerContainer.style.width = '550px';
+        this.playerContainer.style.width = '600px';
         this.playerContainer.style.height = 'auto';
-        this.updateScale(550);
+        this.updateScale(600);
         
         // Drag functionality
         const startDrag = (e) => {
@@ -641,7 +650,7 @@ class SpotifyManager {
         const position = {
             left: parseInt(this.playerContainer.style.left) || 0,
             top: parseInt(this.playerContainer.style.top) || 0,
-            width: 550, // Fixed width
+            width: 600, // Fixed width
             height: 'auto' // Auto height
         };
         localStorage.setItem('spotifyPlayerPosition', JSON.stringify(position));
@@ -657,10 +666,10 @@ class SpotifyManager {
                 this.playerContainer.style.left = `${position.left}px`;
                 this.playerContainer.style.top = `${position.top}px`;
                 this.playerContainer.style.transform = 'none';
-                // Fixed size - always 550px width
-                this.playerContainer.style.width = '550px';
+                // Fixed size - always 600px width
+                this.playerContainer.style.width = '600px';
                 this.playerContainer.style.height = 'auto';
-                this.updateScale(550);
+                this.updateScale(600);
             } catch (e) {
                 console.error('Failed to load player position:', e);
                 this.setDefaultPosition();
@@ -672,7 +681,7 @@ class SpotifyManager {
     
     updateScale(width) {
         if (!this.playerContainer) return;
-        // Base width is 550px, so scale is always 1 at fixed size
+        // Base width is 600px, so scale is always 1 at fixed size
         const scale = 1;
         this.playerContainer.style.setProperty('--scale', scale);
         this.playerContainer.style.setProperty('--container-width', width);
@@ -685,12 +694,12 @@ class SpotifyManager {
         if (overlay) {
             const overlayRect = overlay.getBoundingClientRect();
             this.playerContainer.style.position = 'absolute';
-            this.playerContainer.style.left = `${(overlayRect.width - 550) / 2}px`;
+            this.playerContainer.style.left = `${(overlayRect.width - 600) / 2}px`;
             this.playerContainer.style.top = `${overlayRect.height - 200}px`;
             this.playerContainer.style.transform = 'none';
-            this.playerContainer.style.width = '550px';
+            this.playerContainer.style.width = '600px';
             this.playerContainer.style.height = 'auto';
-            this.updateScale(550);
+            this.updateScale(600);
         }
     }
 
